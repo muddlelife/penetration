@@ -13,7 +13,8 @@
             1.name为jsessionid的cookie不存在（关闭或更换浏览器），返回1中重新创建session与特殊的cookie
             2.name为JSESSIONID的Cookie存在，根据value中的SessionId去寻找session对象，value为SessionId不存在（Session对象默认存活30分钟），返回1中重新去创建Session与特殊的Cookie
             3.value为sessionid存在，返回session对象
-相同点：cookie和session都是用来跟踪浏览器用户身份的会话方式
+相同点
+    cookie和session都是用来跟踪浏览器用户身份的会话方式
 不同点
     1.cookie数据存放在客户的浏览器上，session数据放在服务器上
     2.cookie不是很安全，别人可以分析存放在本地的cookie进行cookie欺骗，要考虑安全应session
@@ -94,3 +95,65 @@ web容器
         CVE-YYYY-NNNN（4个数字）
         CVE-YYYY-id（至少4个数字，可以递增到无限）
         如CVE-2014-1984，或者CVE-2014-3921002    
+
+6.DNS域名解析
+    DNS,就是域名系统，是互联网上作为域名和IP地址相互映射的一个分布式数据库。DNS能够使用户更方便的访问互联网，而不用去记住能够被机器直接读取的IP地址，通过域名，最终得到该域名对应的IP地址的过程叫做域名解析（或主机名解析）
+    流程
+        1.本地hosts文件
+            windows 默认 c:\windows\System32\drivers\etc\hosts
+            linux 默认 /etc/hosts
+        2.本地DNS缓存
+        3.本地DNS服务器
+        4.DNS服务器查找
+    DNS迭代和递归区别
+        1.迭代
+            本地服务器向根DNS服务器发出请求，而根DNS服务器只是给出下一级DNS服务器地址，然后本地DNS服务器再向下一级DNS发送查询请求直至得到最终IP
+        具体流程
+            1.在hosts静态文件、DNS解析器缓存中查找某主机的ip地址
+
+            2.上一步无法找到，在DNS本地服务器（即域服务器）查找所有本层次的区域服务器
+
+            3.本地DNS服务器查不到就查询上一层次的所有区域服务器，以此类推直至根域名DNS服务器
+
+            4.到达根域名服务器后又向下查询，直至查到结果为止。
+        2.递归
+            用户只向本地DNS服务器发出请求，然后得到肯定或否定答案
+        具体流程
+            1.在hosts静态文件、DNS解析器缓存中查找某主机的ip地址
+
+            2.上一步无法找到，去DNS本地服务器（即域服务器）查找，其本质是去区域服务器、服务器缓存中查找
+
+            3.本地DNS服务器查不到就根据‘根提示文件’向负责顶级域‘.com’的DNS服务器查询
+
+            4.根DNS服务器根据查询域名中的‘xyz.com’，再向xyz.com的区域服务器查询
+
+            5.www.xyz.abc.com的DNS服务器直接解析该域名，将查询到的ip再原路返回给请求查询的主机
+
+7.VPN流量规则
+    1.PAC规则（系统代理规则）
+        根据PAC文件中的黑白地址名单(IP)来判断哪些网站走代理，一般都是国内网站不走代理，国外网站走代理
+    2.全局模式
+        国内网站和国外网站都走代理
+
+8.Web程序三层架构
+    通常意义上将整个业务应用划分为界面层+业务逻辑层+数据访问层
+    用户访问网页过程
+        1.Web浏览器中输入网址并连接目标服务器
+        2.业务罗基层的web服务器从本地加载index.php脚本并解析
+        3.脚本连接位于数据访问层的DBMS，并执行SQL
+        4.数据访问层的DBMS返回SQL的执行结果给web server
+        5.业务逻辑层的web server 将页面封装成HTML格式发送给表示层的浏览器
+        6.表示层的浏览器解析HTML并将内容呈现给用户
+
+9.ASP、PHP、JSP的比较
+    1.ASP
+        ASP采用脚本语言VBScript（javascript）作为自己的开发语言。ASP是Microssoft开发的动态网页语言，只能在微软的服务器产品IIS上执行
+    2.PHP
+        PHP是跨平台的服务器端的嵌入式脚本语言，它几乎都要借用C、Java和Perl语言的语法，同时结合PHP自己的特性，使得Web开发者能够快速地写出动态页面。PHP特点是：支持绝大多数数据库，并且其源码是完全公开的
+        PHP可在为indows、unix、linux的web服务器上正常执行，还支持IIS、Apache等一般的Web服务器，用户更换平台时，无需变换PHP代码
+        PHP与MySQL是目前绝佳组合，用户可以自己编写外围的函数的函数间接存取数据库，通过这个的途径，在更换使用的数据库时，可以轻松地修改编码以适应这样的变化
+    3.JSP
+        JSP同PHP类似，几乎可以在所有平台上执行，如windows、linux、Unix。web服务器Apache已经能够支持JSP，而Apache广泛应用在windows、Unix和linux上，因此JSP有更广泛的执行平台
+        从一个平台移植到另外一个平台时，JSP和javaBean甚至不用重新编译，因为java字节码都是标准的，与平台无关。ASP、PHP、JSP三者都是面向web服务器的技术，客户端浏览器不需要任何附加的软甲支持
+        普通的HTML页面只依赖于Web服务器，但ASP、PHP、JSP页面需要附加的语言引擎分析和执行程序代码。程序代码的执行结果被重新嵌入HTML代码中，然后一起发送给浏览器。三者都提高了在HTML代码中混合某种程序代码、由语言引擎解释执行程序代码的能力。JSP代码被编译成Servlet并由java虚拟机解释执行，这种编译操作仅在对JSP页面的第一次请求时发生
+        在ASP、PHP、JSP环境下，HTML代码主要负责描述信息的显示样式，而程序代码则用来描述处理逻辑
