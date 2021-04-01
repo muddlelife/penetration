@@ -191,7 +191,9 @@
   lsb_release -a  # 查看内核版本
   groups  # 查看用户所属组
   sudo -l  # 查看执行的root权限的命令
-  python -c 'import pty;pty.spawn("/bin/bahs")'  # 尝试重开一个新的终端
+  python -c 'import pty;pty.spawn("/bin/bash")'  # 尝试重开一个新的终端
+  find / -perm -o=w -type f 2>/dev/null  # 查看可写的文件
+  perl -le 'print crypt("123456", "aa")'  # 制作一个123456加密的密码，盐值为aa
   ```
 
   > 常见提权方式
